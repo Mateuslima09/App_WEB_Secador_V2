@@ -11,6 +11,9 @@ import InversionPage from './pages/InversionPage';
 import HistoryPage from './pages/HistoryPage';
 import SettingsPage from './pages/SettingsPage';
 import UpdatePage from './pages/UpdatePage';
+import UpdateModal from './components/UpdateModal';
+
+import { SessionProvider } from './contexts/SessionContext';
 
 function App() {
   return (
@@ -18,20 +21,23 @@ function App() {
       <LanguageProvider>
         <NotificationProvider>
           <HistoryProvider>
-            <BrowserRouter>
-              <NotificationContainer />
-              <Routes>
-                <Route path="/" element={<Layout />}>
-                  <Route index element={<InversionPage />} />
-                  <Route path="average" element={<AveragePage />} />
-                  <Route path="history" element={<HistoryPage />} />
-                  <Route path="history" element={<HistoryPage />} />
-                  <Route path="settings" element={<SettingsPage />} />
-                  <Route path="update" element={<UpdatePage />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Route>
-              </Routes>
-            </BrowserRouter>
+            <SessionProvider>
+              <BrowserRouter>
+                <NotificationContainer />
+                <UpdateModal />
+                <Routes>
+                  <Route path="/" element={<Layout />}>
+                    <Route index element={<InversionPage />} />
+                    <Route path="average" element={<AveragePage />} />
+                    <Route path="history" element={<HistoryPage />} />
+                    <Route path="history" element={<HistoryPage />} />
+                    <Route path="settings" element={<SettingsPage />} />
+                    <Route path="update" element={<UpdatePage />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Route>
+                </Routes>
+              </BrowserRouter>
+            </SessionProvider>
           </HistoryProvider>
         </NotificationProvider>
       </LanguageProvider>

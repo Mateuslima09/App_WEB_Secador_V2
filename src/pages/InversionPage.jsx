@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { ArrowRightLeft, Save, AlertCircle, CheckCircle } from 'lucide-react';
+import { ArrowRightLeft, Save, AlertCircle, CheckCircle, Trash2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useHistory } from '../contexts/HistoryContext';
 import { useNotification } from '../contexts/NotificationContext';
 import { checkInversion } from '../utils/calculations';
+import VirtualKeyboard from '../components/VirtualKeyboard';
 
 const InversionPage = () => {
     const { t } = useLanguage();
@@ -13,9 +14,30 @@ const InversionPage = () => {
     const [initial, setInitial] = useState('');
     const [perten, setPerten] = useState('');
     const [result, setResult] = useState(null);
+    const [activeField, setActiveField] = useState('initial'); // 'initial' or 'perten'
+    const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
 
-    const handleCheck = (e) => {
-        e.preventDefault();
+    const handleKeyPress = (key) => {
+        if (activeField === 'initial') {
+            if (key === '.' && initial.includes('.')) return;
+            setInitial(prev => prev + key);
+        } else {
+            if (key === '.' && perten.includes('.')) return;
+            setPerten(prev => prev + key);
+        }
+        setResult(null);
+    };
+
+    const handleDelete = () => {
+        if (activeField === 'initial') {
+            setInitial(prev => prev.slice(0, -1));
+        } else {
+            setPerten(prev => prev.slice(0, -1));
+        }
+        setResult(null);
+    };
+
+    const handleCheck = () => {
         if (!initial || !perten) return;
 
         const res = checkInversion(initial, perten);
@@ -25,6 +47,8 @@ const InversionPage = () => {
         } else {
             showNotification('error', t('inversion.not_allowed'));
         }
+
+        setIsKeyboardOpen(false); // Close keyboard on check
 
         if (autoSave) {
             if (isHistoryFull) {
@@ -59,40 +83,61 @@ const InversionPage = () => {
             <div className="glass-panel p-6">
                 <h2 className="text-2xl font-bold mb-6 gradient-text">{t('inversion.title')}</h2>
 
-                <form onSubmit={handleCheck} className="flex flex-col gap-4">
-                    <div>
-                        <label className="block text-sm font-medium mb-1 text-[var(--color-text-secondary)]">
+                <div className="flex flex-col gap-4">
+                    <div
+                        onClick={() => {
+                            setActiveField('initial');
+                            setIsKeyboardOpen(true);
+                        }}
+                        className={`cursor-pointer transition-all ${activeField === 'initial' ? 'transform scale-[1.02]' : 'opacity-70 hook-hover'}`}
+                    >
+                        <label className={`block text-sm font-medium mb-1 transition-colors ${activeField === 'initial' ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-secondary)]'}`}>
                             {t('inversion.initial_moisture')}
                         </label>
-                        <input
-                            type="number"
-                            step="0.01"
-                            value={initial}
-                            onChange={(e) => setInitial(e.target.value)}
-                            className="input-field"
-                            required
-                        />
+                        <div className={`input-field flex items-center h-12 ${activeField === 'initial' ? 'ring-2 ring-[var(--color-primary)] bg-[var(--color-primary)]/5' : ''}`}>
+                            <span className="text-lg font-mono">{initial}</span>
+                        </div>
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium mb-1 text-[var(--color-text-secondary)]">
+                    <div
+                        onClick={() => {
+                            setActiveField('perten');
+                            setIsKeyboardOpen(true);
+                        }}
+                        className={`cursor-pointer transition-all ${activeField === 'perten' ? 'transform scale-[1.02]' : 'opacity-70 hook-hover'}`}
+                    >
+                        <label className={`block text-sm font-medium mb-1 transition-colors ${activeField === 'perten' ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-secondary)]'}`}>
                             {t('inversion.perten_moisture')}
                         </label>
-                        <input
-                            type="number"
-                            step="0.01"
-                            value={perten}
-                            onChange={(e) => setPerten(e.target.value)}
-                            className="input-field"
-                            required
-                        />
+                        <div className={`input-field flex items-center h-12 ${activeField === 'perten' ? 'ring-2 ring-[var(--color-primary)] bg-[var(--color-primary)]/5' : ''}`}>
+                            <span className="text-lg font-mono">{perten}</span>
+                        </div>
                     </div>
 
-                    <button type="submit" className="btn-primary mt-4">
-                        <ArrowRightLeft size={20} />
-                        {t('inversion.check')}
+                    <button
+                        onClick={() => {
+                            setInitial('');
+                            setPerten('');
+                            setResult(null);
+                        }}
+                        className="btn-secondary flex items-center justify-center gap-2 w-full sm:w-auto"
+                        type="button"
+                    >
+                        <Trash2 size={18} />
+                        {t('common.clear')}
                     </button>
-                </form>
+
+                    {isKeyboardOpen && (
+                        <VirtualKeyboard
+                            onKeyPress={handleKeyPress}
+                            onDelete={handleDelete}
+                            onSubmit={handleCheck}
+                            onClose={() => setIsKeyboardOpen(false)}
+                            submitIcon={ArrowRightLeft}
+                            submitLabel={t('inversion.check')}
+                        />
+                    )}
+                </div>
             </div>
 
             {result && (

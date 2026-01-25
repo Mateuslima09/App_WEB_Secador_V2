@@ -1,5 +1,40 @@
 export const changelog = [
     {
+        version: "1.0.7",
+        date: "2026-01-25",
+        title: {
+            pt: "Atualização de Sistema 1.0.7",
+            en: "System Update 1.0.7",
+            es: "Actualización del Sistema 1.0.7"
+        },
+        changes: [
+            {
+                type: 'feature',
+                text: {
+                    pt: "Novo Teclado Virtual Flutuante para telas touch",
+                    en: "New Floating Virtual Keyboard for touch screens",
+                    es: "Nuevo Teclado Virtual Flotante para pantallas táctiles"
+                }
+            },
+            {
+                type: 'improvement',
+                text: {
+                    pt: "O teclado lembra a última posição na tela",
+                    en: "Keyboard remembers last screen position",
+                    es: "El teclado recuerda la última posición en pantalla"
+                }
+            },
+            {
+                type: 'feature',
+                text: {
+                    pt: "Botão de Limpar campos na tela de Inversão",
+                    en: "Clear fields button on Inversion screen",
+                    es: "Botón de Limpiar campos en pantalla de Inversión"
+                }
+            }
+        ]
+    },
+    {
         version: "1.0.6",
         date: "2025-12-30",
         title: {

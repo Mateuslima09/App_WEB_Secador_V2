@@ -1,26 +1,43 @@
 import React, { useState } from 'react';
-import { Plus, X, Calculator, Save } from 'lucide-react';
+import { Plus, X, Calculator, Save, Trash2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useHistory } from '../contexts/HistoryContext';
 import { useNotification } from '../contexts/NotificationContext';
+import { useSession } from '../contexts/SessionContext';
 import { calculateAverage } from '../utils/calculations';
+import VirtualKeyboard from '../components/VirtualKeyboard';
 
 const AveragePage = () => {
     const { t } = useLanguage();
     const { addToHistory, autoSave, isHistoryFull } = useHistory();
     const { showNotification } = useNotification();
+    const {
+        averageValues: values,
+        setAverageValues: setValues,
+        averageResult: result,
+        setAverageResult: setResult,
+        clearAverageSession
+    } = useSession();
 
     const [currentInput, setCurrentInput] = useState('');
-    const [values, setValues] = useState([]);
-    const [result, setResult] = useState(null);
+    const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
 
-    const handleAdd = (e) => {
-        e.preventDefault();
+    const handleKeyPress = (key) => {
+        if (key === '.' && currentInput.includes('.')) return;
+        setCurrentInput(prev => prev + key);
+    };
+
+    const handleDelete = () => {
+        setCurrentInput(prev => prev.slice(0, -1));
+    };
+
+    const handleAdd = () => {
         if (!currentInput) return;
         const num = parseFloat(currentInput);
         if (!isNaN(num)) {
             setValues([...values, num]);
             setCurrentInput('');
+            setIsKeyboardOpen(false); // Close keyboard on submit
             setResult(null); // Reset result when values change
         }
     };
@@ -70,19 +87,27 @@ const AveragePage = () => {
             <div className="glass-panel p-6">
                 <h2 className="text-2xl font-bold mb-4 gradient-text">{t('average.title')}</h2>
 
-                <form onSubmit={handleAdd} className="flex gap-2 mb-6">
-                    <input
-                        type="number"
-                        step="0.01"
-                        value={currentInput}
-                        onChange={(e) => setCurrentInput(e.target.value)}
-                        placeholder={t('average.placeholder')}
-                        className="input-field flex-1"
-                    />
-                    <button type="submit" className="btn-primary">
-                        <Plus size={20} />
-                    </button>
-                </form>
+                <div className="mb-6">
+                    <div
+                        onClick={() => setIsKeyboardOpen(true)}
+                        className="bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-xl p-4 min-h-[60px] flex items-center justify-end cursor-pointer hover:border-[var(--color-primary)] transition-colors"
+                    >
+                        <span className="text-3xl font-mono text-[var(--color-text-primary)]">
+                            {currentInput || <span className="text-[var(--color-text-tertiary)] opacity-30">0</span>}
+                        </span>
+                    </div>
+
+                    {isKeyboardOpen && (
+                        <VirtualKeyboard
+                            onKeyPress={handleKeyPress}
+                            onDelete={handleDelete}
+                            onSubmit={handleAdd}
+                            onClose={() => setIsKeyboardOpen(false)}
+                            submitIcon={Plus}
+                            submitLabel={t('common.add') || "Adicionar"}
+                        />
+                    )}
+                </div>
 
                 {values.length > 0 && (
                     <div className="mb-6">
@@ -110,6 +135,15 @@ const AveragePage = () => {
                     >
                         <Calculator size={20} />
                         {t('common.calculate')}
+                    </button>
+
+                    <button
+                        onClick={clearAverageSession}
+                        disabled={values.length === 0}
+                        className="btn-secondary aspect-square flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                        title={t('common.clear')}
+                    >
+                        <Trash2 size={20} />
                     </button>
                 </div>
             </div>
