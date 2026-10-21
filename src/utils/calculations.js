@@ -57,3 +57,59 @@ export const checkInversion = (initialMoisture, pertenMoisture) => {
     limit: limitMoisture
   };
 };
+
+/**
+ * Analyzes the uniformity of moisture samples in a lot.
+ * Identifies if the difference between max and min samples exceeds the 5.0% threshold.
+ * 
+ * @param {Array<number|string>} values 
+ * @param {number} threshold Default 5.0%
+ * @returns {Object} Uniformity analysis object
+ */
+export const analyzeLotUniformity = (values, threshold = 5.0) => {
+  if (!values || values.length === 0) {
+    return {
+      hasEnoughSamples: false,
+      count: 0,
+      min: 0,
+      max: 0,
+      spread: 0,
+      isUniform: true,
+      warning: false,
+      threshold
+    };
+  }
+
+  const numericValues = values.map(v => parseFloat(v)).filter(v => !isNaN(v));
+
+  if (numericValues.length < 2) {
+    const singleVal = numericValues.length === 1 ? numericValues[0] : 0;
+    return {
+      hasEnoughSamples: false,
+      count: numericValues.length,
+      min: singleVal,
+      max: singleVal,
+      spread: 0,
+      isUniform: true,
+      warning: false,
+      threshold
+    };
+  }
+
+  const min = Math.min(...numericValues);
+  const max = Math.max(...numericValues);
+  const spread = Number((max - min).toFixed(2));
+  const isUniform = spread < threshold;
+
+  return {
+    hasEnoughSamples: true,
+    count: numericValues.length,
+    min: Number(min.toFixed(2)),
+    max: Number(max.toFixed(2)),
+    spread,
+    isUniform,
+    warning: !isUniform,
+    threshold
+  };
+};
+

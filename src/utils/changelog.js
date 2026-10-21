@@ -1,5 +1,56 @@
 export const changelog = [
     {
+        version: "2.0.0",
+        date: "2026-10-19",
+        title: {
+            pt: "Secador Monitor 2.0 - Clean Edition",
+            en: "Secador Monitor 2.0 - Clean Edition",
+            es: "Secador Monitor 2.0 - Clean Edition"
+        },
+        changes: [
+            {
+                type: 'feature',
+                text: {
+                    pt: "Nova Tela Inicial (Hub de Apresentação) com navegação rápida e acolhedora",
+                    en: "New Home Screen (Presentation Hub) with fast and friendly navigation",
+                    es: "Nueva Pantalla de Inicio (Hub de Presentación) con navegación rápida y acogedora"
+                }
+            },
+            {
+                type: 'feature',
+                text: {
+                    pt: "Novo Alerta de Desuniformidade de Lote na Média (aviso para variação ≥ 5.0%)",
+                    en: "New Lot Uniformity Alert in Average calculation (warning for spread ≥ 5.0%)",
+                    es: "Nueva Alerta de Desuniformidad de Lote en el Promedio (aviso para variación ≥ 5.0%)"
+                }
+            },
+            {
+                type: 'improvement',
+                text: {
+                    pt: "Design Clean 2.0 com visual elegante, tipografia refinada e cards modernos",
+                    en: "Clean 2.0 Design with elegant aesthetics, refined typography and modern cards",
+                    es: "Diseño Clean 2.0 con estética elegante, tipografía refinada y tarjetas modernas"
+                }
+            },
+            {
+                type: 'feature',
+                text: {
+                    pt: "Opção de ativar/desativar o Teclado Virtual nas Configurações e direto na tela",
+                    en: "Option to toggle Virtual Keyboard in Settings and directly on screen",
+                    es: "Opción de activar/desactivar el Teclado Virtual en Configuración y directo en pantalla"
+                }
+            },
+            {
+                type: 'fix',
+                text: {
+                    pt: "Correções visuais completas para telas de celular (quebra de badges, cabeçalho e campos)",
+                    en: "Complete visual fixes for mobile screens (badge wrapping, header, and input fields)",
+                    es: "Correcciones visuales completas para móviles (ajuste de badges, encabezado y campos)"
+                }
+            }
+        ]
+    },
+    {
         version: "1.0.7",
         date: "2026-01-25",
         title: {
